@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name "SD")(type "KiCad")(uri "${KIPRJMOD}/libraries/SD.pretty")(options "")(descr ""))
+  (lib (name "PDS1")(type "KiCad")(uri "${KIPRJMOD}/libraries/PDS1.pretty")(options "")(descr ""))
+)

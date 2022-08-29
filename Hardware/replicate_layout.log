@@ -1,0 +1,51 @@
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 295:Plugin executed on: 'win32'
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 296:Plugin executed with python version: '3.9.10 (main, Apr 30 2022, 01:39:58) [MSC v.1929 64 bit (AMD64)]'
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 297:KiCad build version: (6.0.5)
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 298:Plugin version: 1.1.2
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 299:Frame repr: <wx._core.Frame object at 0x0000019196446280>
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 323:Preparing replicator with U1302 as a reference
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.replicate_layout 98:getting a list of all footprints on board
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 351:source anchor footprint is 'U1302'
+Located on: ['CAN1']
+With filenames: ['CAN.kicad_sch']
+With sheet_id:['CAN1']
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 358:Corresponding footprints are 
+[('U602', ['CAN2']), ('U1302', ['CAN1'])]
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 370:Showing dialog
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 376:Toolbar position: wx.Point(1682, 88)
+07-12 16:07:56 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 382:Dialog position: wx.Point(1318, 88)
+07-12 16:07:58 com_github_MitjaNemec_ReplicateLayout.replicate_layout 335:constructing a list of sheets suitable for replication on level:'CAN1', file:'CAN.kicad_sch'
+07-12 16:07:58 com_github_MitjaNemec_ReplicateLayout.replicate_layout 372:suitable sheets are:[['CAN2']]
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 335:constructing a list of sheets suitable for replication on level:'CAN1', file:'CAN.kicad_sch'
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 372:suitable sheets are:[['CAN2']]
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 145:Replicating layout
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 146:Starting replication of sheets: [['CAN2']]
+on level: ['CAN1']
+with tracks=True, zone=True, text=True, containing=True, remove=False, locked=False, by_group=False
+07-12 16:08:00 root 235:updating GUI message: 'Preparing for replication'
+07-12 16:08:00 root 240:updating GUI with: 0
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 215:Getting the list of source footprints
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 230:Getting the list of all the remaining footprints
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 235:Getting nets local to source footprints
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 238:Getting source bounding box
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 242:Getting source tracks
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 257:Getting source zones
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 266:Getting source text items
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 275:Getting source drawing items
+07-12 16:08:00 root 235:updating GUI message: 'Replicating footprints'
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 669:Replicating footprints
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['CAN2']
+07-12 16:08:00 root 240:updating GUI with: 18
+07-12 16:08:00 root 235:updating GUI message: 'Replicating tracks'
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 835:Replicating tracks
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['CAN2']
+07-12 16:08:00 root 235:updating GUI message: 'Replicating zones'
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 893:Replicating zones
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 900:Replicating zones on sheet ['CAN2']
+07-12 16:08:00 root 235:updating GUI message: 'Replicating text'
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 963:Replicating text
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['CAN2']
+07-12 16:08:00 root 235:updating GUI message: 'Replicating drawings'
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1003:Replicating drawings
+07-12 16:08:00 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1009:Replicating drawings on sheet ['CAN2']
+07-12 16:08:01 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 169:Replication complete

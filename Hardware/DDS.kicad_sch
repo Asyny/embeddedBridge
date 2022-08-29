@@ -644,7 +644,7 @@
     (property "Reference" "C1403" (id 0) (at 170.18 111.7599 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "20p" (id 1) (at 170.18 114.2999 0)
+    (property "Value" "22p" (id 1) (at 170.18 114.2999 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (id 2) (at 167.3352 116.84 0)

@@ -15052,7 +15052,6 @@
   (gr_text "Gister\nembeddedBridge V1.0" (at 24.638 70.358) (layer "F.SilkS") (tstamp 974bf096-916c-47ec-9b51-41089314ad1c)
     (effects (font (size 1.5 1.5) (thickness 0.3)) (justify left))
   )
-  (target plus (at -5.207 92.075) (size 5) (width 0.1) (layer "Edge.Cuts") (tstamp c5db1a03-ab81-43a7-bbbe-26da4ac424ce))
 
   (segment (start 77.707 56.577) (end 77.707 55.6) (width 0.5) (layer "F.Cu") (net 1) (tstamp 0b361341-b8fe-4695-8671-10ac51be7686))
   (segment (start 41.656 3.268) (end 42.833 4.445) (width 0.5) (layer "F.Cu") (net 1) (tstamp 0f17f9a4-926a-4daf-8998-3e4ec187d01a))

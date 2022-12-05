@@ -21,6 +21,7 @@
 
 // custom libraries
 #include "hardware.h"
+#include "HAL.h"
 
 #define DEBUG_SERIAL Serial1
 #define DEBUG_LEVEL DBG_VERBOSE	// DBG_NONE, DBG_ERROR, DBG_WARNING, DBG_INFO, DBG_DEBUG, DBG_VERBOSE
@@ -28,7 +29,7 @@
 using namespace Menu;
 
 // v EEPROM MENU v ------------------------------------------------------------------------------------------
-Adafruit_EEPROM_I2C i2ceeprom;
+//Adafruit_EEPROM_I2C i2ceeprom;
 
 /*uint8_t test;
 test = i2ceeprom.read(0x0);
@@ -41,7 +42,7 @@ MENU_SERIAL.print("eeprom 0x0 read2 is "); MENU_SERIAL.print(test);*/
 // ^ EEPROM MENU ^ ------------------------------------------------------------------------------------------
 
 // v AIN MENU v ------------------------------------------------------------------------------------------
-Adafruit_ADS1115 ads;
+//Adafruit_ADS1115 ads;
 struct ainSettingsSpecific {
 	int16_t adc_value;
 	char* adc_value_string = new char[8];	// xx.xxxV\n
@@ -59,12 +60,12 @@ struct ainSettings {
 void ainGainEvent() {
 	switch(ain.gain) {
 		case 0: MENU_SERIAL.println("auto gain not implemented yet!"); break; // ToDo: add auto gain
-		case 1: ads.setGain(GAIN_TWOTHIRDS); break;
-		case 2: ads.setGain(GAIN_ONE); break;
-		case 3: ads.setGain(GAIN_TWO); break;
-		case 4: ads.setGain(GAIN_FOUR); break;
-		case 5: ads.setGain(GAIN_EIGHT); break;
-		case 6: ads.setGain(GAIN_SIXTEEN); break;
+		case 1: HAL::getInstance()->setAinGain(GAIN_TWOTHIRDS); break;
+		case 2: HAL::getInstance()->setAinGain(GAIN_ONE); break;
+		case 3: HAL::getInstance()->setAinGain(GAIN_TWO); break;
+		case 4: HAL::getInstance()->setAinGain(GAIN_FOUR); break;
+		case 5: HAL::getInstance()->setAinGain(GAIN_EIGHT); break;
+		case 6: HAL::getInstance()->setAinGain(GAIN_SIXTEEN); break;
 		default: MENU_SERIAL.print("GAIN ERROR "); MENU_SERIAL.println(ain.gain); return;
 	}
 	Debug.print(DBG_INFO, "\n>>> gain set to = %d", ain.gain);
@@ -72,7 +73,7 @@ void ainGainEvent() {
 
 SELECT(ain.gain, ainGainMenu, "gain", ainGainEvent, exitEvent, noStyle
 	,VALUE("auto", 0, doNothing, noEvent)
-	,VALUE("1/3", 1, doNothing, noEvent)
+	,VALUE("2/3", 1, doNothing, noEvent)
 	,VALUE("1", 2, doNothing, noEvent)
 	,VALUE("2", 3, doNothing, noEvent)
 	,VALUE("4", 4, doNothing, noEvent)
@@ -113,32 +114,13 @@ struct vccSettings vcc;
 struct vccSettings vdc;
 
 void setPsu() {
-	// ToDo: use constrain() https://www.arduino.cc/reference/en/language/functions/math/constrain/
-	if(vcc.value < 0.0 || vcc.value > VCC_VDC_MAX_VOLTAGE) {
-		MENU_SERIAL.print("ERROR setPsu: psu voltage "); MENU_SERIAL.print(vcc.value); MENU_SERIAL.println(" out of range!");
-		return;
-	}
-	if(vdc.value < 0.0 || vdc.value > VCC_VDC_MAX_VOLTAGE) {
-		MENU_SERIAL.print("ERROR setPsu: psu voltage "); MENU_SERIAL.print(vdc.value); MENU_SERIAL.println(" out of range!");
-		return;
-	}
-	float poti_out[] = {12, 25, 38, 50, 63, 76, 89, 102, 114, 127};
-	float vcc_output[]  = {4.87, 6.31, 8.86, 11.23, 13.79, 16.36, 18.93, 21.5, 23.88, 26.45};
-	float vcc_wiper = multiMap<float>(vcc.value, vcc_output, poti_out, (sizeof(poti_out) / sizeof(poti_out[0])));
-	//uint8_t vcc_wiper = vcc.value * VCC_VOLTAGE_MULTIPLIER;
-	uint8_t vdc_wiper = vdc.value * VDC_VOLTAGE_MULTIPLIER;
-	if(vcc_wiper > 127) { vcc_wiper = 127; }
-	if(vdc_wiper > 127) { vdc_wiper = 127; }
-	mcp_vcc.writeWiper(vcc_wiper);
-	//mcp_vdc.writeWiper(vdc_wiper);
-
-	Debug.print(DBG_INFO, "\n>>> set vcc_wiper to = %.2f", vcc_wiper);
-	Debug.print(DBG_INFO, "\n>>> set vdc_wiper to = %d", vdc_wiper);
+	HAL::getInstance()->configurePowerSupply(HAL::PsuType::VCC_RAIL, vcc.value);
+	HAL::getInstance()->configurePowerSupply(HAL::PsuType::VDC_RAIL, vdc.value);
 }
 
 void psuEvent() {
-	mcp.digitalWrite(VCC_EN_PIN, vcc.enable);
-	mcp.digitalWrite(VDC_EN_PIN, vdc.enable);
+	HAL::getInstance()->setVccOutput(vcc.enable);
+	HAL::getInstance()->setVdcOutput(vdc.enable);
 }
 
 TOGGLE(vcc.enable, vccEnMenu, "output ", psuEvent, enterEvent, wrapStyle
@@ -174,25 +156,10 @@ struct doutSettings dout2;
 struct doutSettings dout3;
 struct doutSettings dout4;
 
-void setDout(int dout_vcc, int dout_vdc, int value) {
-	if(value == 1) {
-		mcp.digitalWrite(dout_vdc, LOW);
-		delay(10); // delay to prevent shorting VCC and VDC
-		mcp.digitalWrite(dout_vcc, HIGH);
-	} else if (value == 2) {
-		mcp.digitalWrite(dout_vcc, LOW);
-		delay(10); // delay to prevent shorting VCC and VDC
-		mcp.digitalWrite(dout_vdc, HIGH);
-	} else {
-		mcp.digitalWrite(dout_vcc, LOW);
-		mcp.digitalWrite(dout_vdc, LOW);
-	}
-}
-
-void dout1Event() { setDout(VCC_DOUT1_PIN, VDC_DOUT1_PIN, dout1.value); }
-void dout2Event() { setDout(VCC_DOUT2_PIN, VDC_DOUT2_PIN, dout2.value); }
-void dout3Event() { setDout(VCC_DOUT3_PIN, VDC_DOUT3_PIN, dout3.value); }
-void dout4Event() { setDout(VCC_DOUT4_PIN, VDC_DOUT4_PIN, dout4.value); }
+void dout1Event() { HAL::getInstance()->setDigitalOut(1, static_cast<HAL::DigOutMode>(dout1.value)); }
+void dout2Event() { HAL::getInstance()->setDigitalOut(2, static_cast<HAL::DigOutMode>(dout2.value)); }
+void dout3Event() { HAL::getInstance()->setDigitalOut(3, static_cast<HAL::DigOutMode>(dout3.value)); }
+void dout4Event() { HAL::getInstance()->setDigitalOut(4, static_cast<HAL::DigOutMode>(dout4.value)); }
 SELECT(dout1.value, dout1Menu, "Dout1", dout1Event, exitEvent, noStyle
 	,VALUE("VDC", 2, doNothing, noEvent)
 	,VALUE("VCC", 1, doNothing, noEvent)
@@ -227,9 +194,6 @@ MENU(doutMenu, "DOUT", doNothing, noEvent, noStyle
 // ^ DOUT+PSU MENU ^ ------------------------------------------------------------------------------------------
 
 // v FOUT MENU v ------------------------------------------------------------------------------------------
-MD_AD9833 AD(SPI0_MOSI, SPI0_SCK, AD9833_DDS_CS);
-Adafruit_MCP4725 dac_dds;
-
 struct foutSettings {
 	char frequency[50]="1000";
 	float offset = 0.0;
@@ -237,35 +201,17 @@ struct foutSettings {
 	uint8_t multiplier = 0;
 } fout;
 
-static MD_AD9833::mode_t modes[] = {
-	MD_AD9833::MODE_OFF,
-	MD_AD9833::MODE_SINE,
-	MD_AD9833::MODE_SQUARE1,
-	MD_AD9833::MODE_SQUARE2,
-	MD_AD9833::MODE_TRIANGLE 
-};
-
 const char* constMEM alphaNum MEMMODE="0123456789";
 const char* constMEM alphaNumMask[] MEMMODE={alphaNum};
 
 void foutEvent() {
-	uint multip = 1000;
-	for(int i = 1; i < fout.multiplier; i++) {
-		multip *= multip;
-	}
-
-	uint freq = atoi(fout.frequency);
-	if(fout.multiplier != 0) {
-		freq *= multip;
-	}
-
-	AD.setMode(modes[fout.mode]);
-	AD.setFrequency(MD_AD9833::CHAN_0, freq);
+	HAL* hal = HAL::getInstance();
+	hal->setFreqOutMode(hal->getFreqOutModeMapping(fout.mode));
+	hal->setFreqOutFrequency(atoi(fout.frequency), fout.multiplier);
 }
 
 void foutOffsetEvent() {
-	int offset_int = fout.offset * FOUT_OFFSET_MULTIPLIER;
-	dac_dds.setVoltage(offset_int, false);
+	HAL::getInstance()->setFreqOutOffset(fout.offset);
 }
 
 SELECT(fout.mode, foutModeMenu, "Mode", foutEvent, exitEvent, noStyle
@@ -292,7 +238,7 @@ MENU(foutMenu, "FOUT", doNothing, noEvent, noStyle
 // ^ FOUT MENU ^
 
 // v BAT MENU v
-Adafruit_MCP4725 dac_bat;
+
 //Adafruit_INA219 ina_bat(INA219_BAT_ADDR);
 struct batSettings {
 	float value = 0.0;
@@ -300,9 +246,7 @@ struct batSettings {
 } bat;
 
 void batEvent() {
-	int bat_out = bat.value * BAT_MULTIPLIER;
-	if(bat_out > 4095) { bat_out = 4095; }
-	dac_bat.setVoltage(bat_out, false);
+	HAL::getInstance()->setBatSimVoltage(bat.value);
 }
 
 MENU(batMenu, "Battery sim", doNothing, noEvent, noStyle
@@ -331,10 +275,10 @@ struct lshiftSettings {
 } lshift;
 
 void lshiftEvent() {
-	digitalWrite(LEVELSHIFT1_PIN, lshift.enable1);
-	digitalWrite(LEVELSHIFT2_PIN, lshift.enable2);
-	digitalWrite(LEVELSHIFT3_PIN, lshift.enable3);
-	digitalWrite(LEVELSHIFT4_PIN, lshift.enable4);
+	HAL::getInstance()->setLevelShift1(lshift.enable1);
+	HAL::getInstance()->setLevelShift2(lshift.enable2);
+	HAL::getInstance()->setLevelShift3(lshift.enable3);
+	HAL::getInstance()->setLevelShift4(lshift.enable4);
 }
 TOGGLE(lshift.enable1, lshiftEn1Menu, "1 ", lshiftEvent, enterEvent, wrapStyle
 	,VALUE("on", HIGH, doNothing, noEvent)
@@ -380,8 +324,8 @@ struct relaisSettings {
 } relais;
 
 void relaisEvent() {
-	digitalWrite(RELAIS1_PIN, relais.enable1);
-	digitalWrite(RELAIS2_PIN, relais.enable2);
+	HAL::getInstance()->setRelais1(relais.enable1);
+	HAL::getInstance()->setRelais2(relais.enable2);
 }
 
 TOGGLE(relais.enable1, relaisEn1Menu, "1 ", relaisEvent, enterEvent, wrapStyle
@@ -443,104 +387,7 @@ NAVROOT(nav,mainMenu,MAX_DEPTH,serial,out);
 // ^ MAIN MENU ^
 
 void setup() {
-	// Serial init
-	Serial.begin(SERIAL_BAUD);
-	/*while(!Serial) {
-		delay(1);
-	}*/
-	// UART0 init
-	Serial1.setTX(UART0_TX);
-	Serial1.setRX(UART0_RX);
-	Serial1.begin(UART0_BAUD);
-	// UART1 init
-	Serial2.setTX(UART1_TX);
-	Serial2.setRX(UART1_RX);
-	Serial2.begin(UART1_BAUD);
-
-	// DEBUG init
-	Debug.setDebugLevel(DEBUG_LEVEL);
-	Debug.setDebugOutputStream(&DEBUG_SERIAL);
-
-	// GPIO init
-	pinMode(LED_PIN, OUTPUT);
-	pinMode(RELAIS1_PIN, OUTPUT);
-	pinMode(RELAIS2_PIN, OUTPUT);
-	pinMode(LEVELSHIFT1_PIN, OUTPUT);
-	pinMode(LEVELSHIFT2_PIN, OUTPUT);
-	pinMode(LEVELSHIFT3_PIN, OUTPUT);
-	pinMode(LEVELSHIFT4_PIN, OUTPUT);
-	pinMode(AMP_HL, OUTPUT);
-	pinMode(SD_CD, INPUT);
-
-	digitalWrite(LED_PIN, HIGH);	// ToDo: do something usefull with led ...
-	digitalWrite(RELAIS1_PIN, relais.enable1);
-	digitalWrite(RELAIS2_PIN, relais.enable2);
-	digitalWrite(LEVELSHIFT1_PIN, lshift.enable1);
-	digitalWrite(LEVELSHIFT2_PIN, lshift.enable2);
-	digitalWrite(LEVELSHIFT3_PIN, lshift.enable3);
-	digitalWrite(LEVELSHIFT4_PIN, lshift.enable4);
-	digitalWrite(AMP_HL, LOW);	// ToDo: use some default value
-	digitalWrite(SD_CD, LOW);	// ToDo: use some default value
-
-	// SPI init
-	SPI.setSCK(SPI0_SCK);
-	SPI.setTX(SPI0_MOSI);
-	SPI.setRX(SPI0_MISO);
-
-	AD.begin();
-	AD.setMode(modes[fout.mode]);
-	AD.setFrequency(MD_AD9833::CHAN_0, atoi(fout.frequency));
-	//MCP2515_CAN1_CS
-	//MCP2515_CAN2_CS
-	//SD_CS
-
-	// I2C 1 init
-	Wire.setSDA(I2C0_SDA);
-	Wire.setSCL(I2C0_SCL);
-	if(!ads.begin(ADS1115_AIN_ADDR)) {
-		MENU_SERIAL.println("Failed to initialize ADS1115 (AIN)");
-		Debug.print(DBG_ERROR, "\n>>> Failed to initialize ADS1115 (AIN)");
-	}
-
-	if(!i2ceeprom.begin(EEPROM_ADDR)) {
-		MENU_SERIAL.println("Failed to initialize EEPROM");
-		Debug.print(DBG_ERROR, "\n>>> Failed to initialize EEPROM");
-	}
-
-	if(!mcp.begin_I2C(MCP23017_DOUT_ADDR)) {
-		MENU_SERIAL.println("Failed to initialize MCP23017 (DOUT)");
-		Debug.print(DBG_ERROR, "\n>>> Failed to initialize MCP23017 (DOUT)");
-	}
-
-	if(!dac_bat.begin(MCP4725_BAT_ADDR)) {
-		MENU_SERIAL.println("Failed to initialize MCP4725 (BAT)");
-		Debug.print(DBG_ERROR, "\n>>> Failed to initialize MCP4725 (BAT)");
-	}
-	dac_bat.setVoltage(0, false); // use bat.value*BAT_MULTIPLIER variable
-
-	if(!dac_dds.begin(MCP4725_DDSOFFSET_ADDR)) {
-		MENU_SERIAL.println("Failed to initialize MCP4725 (DDS offset)");
-		Debug.print(DBG_ERROR, "\n>>> Failed to initialize MCP4725 (DDS offset)");
-	}
-	dac_dds.setVoltage(0, false); // use fout.offset (needs to be converted)
-
-	mcp_vcc.begin();
-	mcp_vcc.writeWiper(255);	// ToDo: use correct init value
-
-	// I2C 2 init
-	Wire1.setSDA(I2C1_SDA);
-	Wire1.setSCL(I2C1_SCL);
-
-	// MCP23017 init
-	for(int i = 0; i <= MCP23017_MAX_PIN; i++) {
-		mcp.pinMode(i, OUTPUT);
-		mcp.digitalWrite(i, LOW);
-	}
-
-	if(!ina_vcc.begin()) {
-		MENU_SERIAL.println("Failed to initialize INA219 (VCC).");
-		Debug.print(DBG_ERROR, "\n>>> Failed to initialize INA219 (VCC)");
-	}
+	HAL::getInstance()->initialize();
 
 	options=&myOptions;
 
@@ -565,23 +412,23 @@ void setup() {
 }
 
 void loop() {
-	sprintf(vcc.ina.voltage, "%.2fV", ina_vcc.getBusVoltage_V());
-	sprintf(vcc.ina.current, "%.2fmA", ina_vcc.getCurrent_mA());
-	sprintf(vcc.ina.power, "%.2fmW", ina_vcc.getPower_mW());
+	// sprintf(vcc.ina.voltage, "%.2fV", ina_vcc.getBusVoltage_V());
+	// sprintf(vcc.ina.current, "%.2fmA", ina_vcc.getCurrent_mA());
+	// sprintf(vcc.ina.power, "%.2fmW", ina_vcc.getPower_mW());
 
 	/*sprintf(vdc.ina.voltage, "%.2fV", ina_vdc.getBusVoltage_V());
 	sprintf(vdc.ina.current, "%.2fmA", ina_vdc.getCurrent_mA());
 	sprintf(vdc.ina.power, "%.2fmW", ina_vdc.getPower_mW());*/
 
-	ain.ain1.adc_value = ads.readADC_SingleEnded(0);
-	ain.ain2.adc_value = ads.readADC_SingleEnded(1);
-	ain.ain3.adc_value = ads.readADC_SingleEnded(2);
-	ain.ain4.adc_value = ads.readADC_SingleEnded(3);
-
-	sprintf(ain.ain1.adc_value_string, "%.3fV", ads.computeVolts(ain.ain1.adc_value) * AIN4_VOLTAGE_DEVIDER);
-	sprintf(ain.ain2.adc_value_string, "%.3fV", ads.computeVolts(ain.ain2.adc_value) * AIN4_VOLTAGE_DEVIDER);
-	sprintf(ain.ain3.adc_value_string, "%.3fV", ads.computeVolts(ain.ain3.adc_value) * AIN4_VOLTAGE_DEVIDER);
-	sprintf(ain.ain4.adc_value_string, "%.3fV", ads.computeVolts(ain.ain4.adc_value) * AIN4_VOLTAGE_DEVIDER);
+	float ainVoltage = 0.0f;
+	HAL::getInstance()->readAdcChannel(0, ainVoltage);
+	sprintf(ain.ain1.adc_value_string, "%.3fV", ainVoltage);
+	HAL::getInstance()->readAdcChannel(1, ainVoltage);
+	sprintf(ain.ain2.adc_value_string, "%.3fV", ainVoltage);
+	HAL::getInstance()->readAdcChannel(2, ainVoltage);
+	sprintf(ain.ain3.adc_value_string, "%.3fV", ainVoltage);
+	HAL::getInstance()->readAdcChannel(3, ainVoltage);
+	sprintf(ain.ain4.adc_value_string, "%.3fV", ainVoltage);
 
 	//Serial1.println("asdf");
 	//Serial2.println("bsdf");

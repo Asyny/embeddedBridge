@@ -1,3 +1,6 @@
+#ifndef HARDWARE_H
+#define HARDWARE_H
+
 #include <Arduino.h>
 
 // datasheets
@@ -88,3 +91,5 @@
 #define VDC_VOLTAGE_MULTIPLIER 4.561
 
 #define MENU_SERIAL Serial1
+
+#endif // HARDWARE_H

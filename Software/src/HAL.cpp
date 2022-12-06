@@ -97,7 +97,7 @@ void HAL::setBatSimVoltage(float_t value)
 {
 	uint16_t bat_out = static_cast<uint16_t>(value * BAT_MULTIPLIER);
 	bat_out = min(bat_out,4095);
-	dac_bat.setVoltage(bat_out, false);
+	//dac_bat.setVoltage(bat_out, false);
 }
 
 
@@ -379,11 +379,11 @@ void HAL::initializeI2c(void) {
 		Debug.print(DBG_ERROR, "\n>>> Failed to initialize MCP23017 (DOUT)");
 	}
 
-	if (!dac_bat.begin(MCP4725_BAT_ADDR)) {
-		MENU_SERIAL.println("Failed to initialize MCP4725 (BAT)");
-		Debug.print(DBG_ERROR, "\n>>> Failed to initialize MCP4725 (BAT)");
-	}
-	dac_bat.setVoltage(0, false); // use bat.value*BAT_MULTIPLIER variable
+	//if (!dac_bat.begin(MCP4725_BAT_ADDR)) {
+	//	MENU_SERIAL.println("Failed to initialize MCP4725 (BAT)");
+	//	Debug.print(DBG_ERROR, "\n>>> Failed to initialize MCP4725 (BAT)");
+	//}
+	//dac_bat.setVoltage(0, false); // use bat.value*BAT_MULTIPLIER variable
 
 	if (!dac_dds.begin(MCP4725_DDSOFFSET_ADDR)) {
 		MENU_SERIAL.println("Failed to initialize MCP4725 (DDS offset)");

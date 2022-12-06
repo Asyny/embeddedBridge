@@ -1,3 +1,6 @@
+#ifndef HAL_H
+#define HAL_H
+
 #include <MD_AD9833.h>
 #include <Adafruit_EEPROM_I2C.h>
 #include <Adafruit_ADS1X15.h>
@@ -107,3 +110,5 @@ private:
     void initializeI2c(void);
     void initializePsu(void);
 };
+
+#endif // HAL_H

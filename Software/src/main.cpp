@@ -50,13 +50,13 @@ void loop() {
 
 	float ainVoltage = 0.0f;
 	HAL::getInstance()->readAdcChannel(0, ainVoltage);
-	// sprintf(SerialMenu::ain.ain1.adc_value_string, "%.3fV", ainVoltage);
+	sprintf(SerialMenu::ain.ain1.adc_value_string, "%.3fV", ainVoltage);
 	HAL::getInstance()->readAdcChannel(1, ainVoltage);
-	// sprintf(SerialMenu::ain.ain2.adc_value_string, "%.3fV", ainVoltage);
+	sprintf(SerialMenu::ain.ain2.adc_value_string, "%.3fV", ainVoltage);
 	HAL::getInstance()->readAdcChannel(2, ainVoltage);
-	// sprintf(SerialMenu::ain.ain3.adc_value_string, "%.3fV", ainVoltage);
+	sprintf(SerialMenu::ain.ain3.adc_value_string, "%.3fV", ainVoltage);
 	HAL::getInstance()->readAdcChannel(3, ainVoltage);
-	// sprintf(SerialMenu::ain.ain4.adc_value_string, "%.3fV", ainVoltage);
+	sprintf(SerialMenu::ain.ain4.adc_value_string, "%.3fV", ainVoltage);
 
 	//Serial1.println("asdf");
 	//Serial2.println("bsdf");

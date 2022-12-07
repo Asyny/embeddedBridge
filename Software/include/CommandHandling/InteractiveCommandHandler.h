@@ -151,7 +151,7 @@ namespace SerialMenu {
     }
 
     static void batEvent() {
-        HAL::getInstance()->setBatSimVoltage(bat.value);
+        // HAL::getInstance()->setBatSimVoltage(bat.value);
     }
 
     static void lshiftEvent() {
@@ -162,29 +162,6 @@ namespace SerialMenu {
     }
 
     static void initialize() {
-        SELECT(ain.gain, ainGainMenu, "gain", ainGainEvent, exitEvent, noStyle
-            ,VALUE("auto", 0, doNothing, noEvent)
-            ,VALUE("2/3", 1, doNothing, noEvent)
-            ,VALUE("1", 2, doNothing, noEvent)
-            ,VALUE("2", 3, doNothing, noEvent)
-            ,VALUE("4", 4, doNothing, noEvent)
-            ,VALUE("8", 5, doNothing, noEvent)
-            ,VALUE("16", 6, doNothing, noEvent)
-        );
-
-        MENU(ainMenu, "AIN", doNothing, noEvent, noStyle
-            ,SUBMENU(ainGainMenu)
-            ,EDIT("AIN1", ain.ain1.adc_value_string, empty, doNothing, noEvent, noStyle)
-            ,EDIT("AIN2", ain.ain2.adc_value_string, empty, doNothing, noEvent, noStyle)
-            ,EDIT("AIN3", ain.ain3.adc_value_string, empty, doNothing, noEvent, noStyle)
-            ,EDIT("AIN4", ain.ain4.adc_value_string, empty, doNothing, noEvent, noStyle)
-            ,EXIT("Back")
-        );
-
-        ainMenu[1].disable();
-        ainMenu[2].disable();
-        ainMenu[3].disable();
-        ainMenu[4].disable();
 
         TOGGLE(vcc.enable, vccEnMenu, "output ", psuEvent, enterEvent, wrapStyle
             ,VALUE("on", HIGH, doNothing, noEvent)
@@ -203,6 +180,10 @@ namespace SerialMenu {
             ,EDIT("current", vcc.ina.current, empty, doNothing, noEvent, noStyle)
             ,EDIT("power", vcc.ina.power, empty, doNothing, noEvent, noStyle)
         );
+
+        vccMenu[2].disable();	// shows current output voltage of vcc
+	    vccMenu[3].disable();	// shows current output current of vcc
+	    vccMenu[4].disable();	// shows current output power of vcc
 
         /*MENU(vdcMenu, "VDC", doNothing, noEvent, noStyle
             ,SUBMENU(vdcEnMenu)
@@ -247,6 +228,9 @@ namespace SerialMenu {
             ,SUBMENU(dout4Menu)
             ,EXIT("Back")
         );
+
+        doutMenu[1].disable();	// shows current output voltage of vcc
+	    //doutMenu[3].disable();	// shows current output voltage of vdc
 
         SELECT(fout.mode, foutModeMenu, "Mode", foutEvent, exitEvent, noStyle
             ,VALUE("Off", 0, doNothing, noEvent)
@@ -319,14 +303,39 @@ namespace SerialMenu {
             ,EXIT("Back")
         );
 
+        SELECT(ain.gain, ainGainMenu, "gain", ainGainEvent, exitEvent, noStyle
+            ,VALUE("auto", 0, doNothing, noEvent)
+            ,VALUE("2/3", 1, doNothing, noEvent)
+            ,VALUE("1", 2, doNothing, noEvent)
+            ,VALUE("2", 3, doNothing, noEvent)
+            ,VALUE("4", 4, doNothing, noEvent)
+            ,VALUE("8", 5, doNothing, noEvent)
+            ,VALUE("16", 6, doNothing, noEvent)
+        );
+
+        const char *constMEM empty[] MEMMODE = {};
+        MENU(ainMenu, "AIN", doNothing, noEvent, noStyle
+            ,SUBMENU(ainGainMenu)
+            ,EDIT("AIN1", ain.ain1.adc_value_string, empty, doNothing, noEvent, noStyle)
+            ,EDIT("AIN2", ain.ain2.adc_value_string, empty, doNothing, noEvent, noStyle)
+            ,EDIT("AIN3", ain.ain3.adc_value_string, empty, doNothing, noEvent, noStyle)
+            ,EDIT("AIN4", ain.ain4.adc_value_string, empty, doNothing, noEvent, noStyle)
+            ,EXIT("Back")
+        );
+
+        ainMenu[1].disable();
+        ainMenu[2].disable();
+        ainMenu[3].disable();
+        ainMenu[4].disable();
+
         MENU(mainMenu, "Main menu", doNothing, noEvent, wrapStyle
             ,SUBMENU(doutMenu)
             ,SUBMENU(lshiftMenu)
-            // ,SUBMENU(ainMenu)
+            ,SUBMENU(ainMenu) 
             ,SUBMENU(foutMenu)
-            // ,SUBMENU(batMenu)
-            ,SUBMENU(relaisMenu)
-            // ToDo: calibration for AIN, ?
+            ,SUBMENU(batMenu)
+            ,SUBMENU(relaisMenu) 
+            // ToDo: calibration for AIN
             ,EXIT("EXIT")
         );
 

@@ -8,6 +8,7 @@
 #include "HAL.h"
 #include "CommandHandling/InteractiveCommandHandler.h"
 
+#include "DataHandling/DataModel.h"
 
 #define DEBUG_SERIAL Serial1
 #define DEBUG_LEVEL DBG_VERBOSE	// DBG_NONE, DBG_ERROR, DBG_WARNING, DBG_INFO, DBG_DEBUG, DBG_VERBOSE
@@ -49,14 +50,14 @@ void loop() {
 	sprintf(vdc.ina.power, "%.2fmW", ina_vdc.getPower_mW());*/
 
 	float ainVoltage = 0.0f;
-	HAL::getInstance()->readAdcChannel(0, ainVoltage);
-	sprintf(SerialMenu::ain.ain1.adc_value_string, "%.3fV", ainVoltage);
+	HAL::getInstance()->readAdcChannel(0, ainVoltage); 
+	sprintf(DataModel::ain.adc1_value, "%.3fV", ainVoltage);
 	HAL::getInstance()->readAdcChannel(1, ainVoltage);
-	sprintf(SerialMenu::ain.ain2.adc_value_string, "%.3fV", ainVoltage);
+	sprintf(DataModel::ain.adc2_value, "%.3fV", ainVoltage);
 	HAL::getInstance()->readAdcChannel(2, ainVoltage);
-	sprintf(SerialMenu::ain.ain3.adc_value_string, "%.3fV", ainVoltage);
+	sprintf(DataModel::ain.adc3_value, "%.3fV", ainVoltage);
 	HAL::getInstance()->readAdcChannel(3, ainVoltage);
-	sprintf(SerialMenu::ain.ain4.adc_value_string, "%.3fV", ainVoltage);
+	sprintf(DataModel::ain.adc4_value, "%.3fV", ainVoltage);
 
 	//Serial1.println("asdf");
 	//Serial2.println("bsdf");

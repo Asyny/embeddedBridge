@@ -7,10 +7,10 @@ namespace DataModel
     struct ainSettings {
         uint8_t gain = 0;
         uint8_t mode = 0;
-        char adc1_value[8];
-        char adc2_value[8];
-        char adc3_value[8];
-        char adc4_value[8];
+        char adc1_value[10];
+        char adc2_value[10];
+        char adc3_value[10];
+        char adc4_value[10];
     };
 
     extern struct ainSettings ain;
@@ -27,9 +27,9 @@ namespace DataModel
 
     // ############# Power supplies #################
     struct inaValues {
-        char* voltage = new char[7];	// xx.xxV\n
-        char* current = new char[10];	// xxxx.xxmA\n
-        char* power = new char[10];		// xxxx.xxmW\n
+        char voltage[10];	// xxxx.xxV\n
+        char current[10];	// xxxx.xxmA\n
+        char power[10];		// xxxx.xxmW\n
     };
 
     struct vccSettings {

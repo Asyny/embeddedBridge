@@ -14,15 +14,22 @@ DataHandler::~DataHandler(void) {
 
 
 void DataHandler::process(void) {
-    // sprintf(vcc.ina.voltage, "%.2fV", ina_vcc.getBusVoltage_V());
-	// sprintf(vcc.ina.current, "%.2fmA", ina_vcc.getCurrent_mA());
-	// sprintf(vcc.ina.power, "%.2fmW", ina_vcc.getPower_mW());
+	float_t inaValue = 0.0f;
+	inaValue = HAL::getInstance()->getInaVoltage(HAL::PsuType::VCC_RAIL);
+    sprintf(DataModel::vcc.ina.voltage, "%.2fV", inaValue);
+	inaValue = HAL::getInstance()->getInaCurrent(HAL::PsuType::VCC_RAIL);
+	sprintf(DataModel::vcc.ina.current, "%.2fmA", inaValue);
+	inaValue = HAL::getInstance()->getInaPower(HAL::PsuType::VCC_RAIL);
+	sprintf(DataModel::vcc.ina.power, "%.2fmW", inaValue);
 
-	// sprintf(vdc.ina.voltage, "%.2fV", ina_vdc.getBusVoltage_V());
-	// sprintf(vdc.ina.current, "%.2fmA", ina_vdc.getCurrent_mA());
-	// sprintf(vdc.ina.power, "%.2fmW", ina_vdc.getPower_mW());
+	// inaValue = HAL::getInstance()->getInaVoltage(HAL::PsuType::VDC_RAIL);
+    // sprintf(DataModel::vcc.ina.voltage, "%.2fV", inaValue);
+	// inaValue = HAL::getInstance()->getInaCurrent(HAL::PsuType::VDC_RAIL);
+	// sprintf(DataModel::vcc.ina.current, "%.2fmA", inaValue);
+	// inaValue = HAL::getInstance()->getInaPower(HAL::PsuType::VDC_RAIL);
+	// sprintf(DataModel::vcc.ina.power, "%.2fmW", inaValue);
 
-    float ainVoltage = 0.0f;
+    float_t ainVoltage = 0.0f;
 	HAL::getInstance()->readAdcChannel(0, ainVoltage); 
 	sprintf(DataModel::ain.adc1_value, "%.3fV", ainVoltage);
 	HAL::getInstance()->readAdcChannel(1, ainVoltage);

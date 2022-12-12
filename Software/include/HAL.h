@@ -84,6 +84,10 @@ public:
     void setVdcOutput(bool enable);
     void setDigitalOut(uint32_t outputChannel, enum DigOutMode mode);
 
+    float_t getInaVoltage(enum PsuType psuType);
+    float_t getInaCurrent(enum PsuType psuType);
+    float_t getInaPower(enum PsuType psuType);
+
 protected:
     static HAL* halInstance_;
 

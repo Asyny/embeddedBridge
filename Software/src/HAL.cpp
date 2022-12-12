@@ -298,6 +298,81 @@ void HAL::setDigitalOut(uint32_t outputChannel, enum DigOutMode mode)
 }
 
 
+float_t HAL::getInaVoltage(enum PsuType psuType) {
+	float_t value = 0.0f;
+	switch (psuType)
+	{
+		case PsuType::VCC_RAIL:
+		{
+			value = ina_vcc.getBusVoltage_V();
+			break;
+		}
+
+		case PsuType::VDC_RAIL:
+		{
+			// value = ina_vdc.getBusVoltage_V();
+			break;
+		}
+
+		default:
+			DEBUG_SERIAL.print("Unsupported power rail");
+			break;
+	}
+
+	return value;
+}
+
+
+float_t HAL::getInaCurrent(enum PsuType psuType) {
+	float_t value = 0.0f;
+	switch (psuType)
+	{
+		case PsuType::VCC_RAIL:
+		{
+			value = ina_vcc.getCurrent_mA();
+			break;
+		}
+
+		case PsuType::VDC_RAIL:
+		{
+			// value = ina_vdc.getCurrent_mA();
+			break;
+		}
+
+		default:
+			DEBUG_SERIAL.print("Unsupported power rail");
+			break;
+	}
+
+	return value;
+}
+
+
+float_t HAL::getInaPower(enum PsuType psuType) {
+	float_t value = 0.0f;
+	switch (psuType)
+	{
+		case PsuType::VCC_RAIL:
+		{
+			value = ina_vcc.getPower_mW();
+			break;
+		}
+
+		case PsuType::VDC_RAIL:
+		{
+			// value = ina_vdc.getPower_mW();
+			break;
+		}
+
+		default:
+			DEBUG_SERIAL.print("Unsupported power rail");
+			break;
+	}
+
+	return value;
+}
+
+
 void HAL::initializeSerials(void) {
     // Serial init
 	Serial.begin(SERIAL_BAUD);

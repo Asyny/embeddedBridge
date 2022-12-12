@@ -1,6 +1,8 @@
 #ifndef DATA_MODEL_H
 #define DATA_MODEL_H
 
+#include <Arduino.h>
+
 namespace DataModel
 {
     // ############# AIN #################

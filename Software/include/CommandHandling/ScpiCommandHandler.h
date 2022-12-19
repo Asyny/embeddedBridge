@@ -15,7 +15,7 @@ public:
     virtual void doProcess(void) override;
 
 private:
-
+    String commandLine = "";
 
 };
 

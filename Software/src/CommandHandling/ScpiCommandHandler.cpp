@@ -4,7 +4,6 @@
 
 #include "hardware.h"
 
-
 ScpiCommandHandler::ScpiCommandHandler(void) : CommandHandler() {
 
 }
@@ -33,6 +32,18 @@ void ScpiCommandHandler::doProcess(void) {
         commandLine.replace("\r\n", "");
         if (commandLine.equals("SYStem:COMmand:INput MENU")) {
             DataModel::newMode = DataModel::CommandHandlerInputMode::INTERACTIVE;
+        }
+        if (commandLine.equals("RELais:A:ACTivate")) {
+            DataModel::relais.enable1 = true;
+        }
+        if (commandLine.equals("RELais:A:DEACTivate")) {
+            DataModel::relais.enable1 = false;
+        }
+        if (commandLine.equals("RELais:B:ACTivate")) {
+            DataModel::relais.enable2 = true;
+        }
+        if (commandLine.equals("RELais:B:DEACTivate")) {
+            DataModel::relais.enable2 = false;
         }
         commandLine = "";
     }

@@ -9,8 +9,6 @@
 #include <menuIO/chainStream.h>
 #include <menuIO/serialIn.h>
 
-#include "hardware.h"
-#include "HAL.h"
 #include "DataHandling/DataModel.h"
 
 namespace SerialMenu {

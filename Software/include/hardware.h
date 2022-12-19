@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 
+#define DEBUG_SERIAL Serial1
+#define DEBUG_LEVEL DBG_VERBOSE	// DBG_NONE, DBG_ERROR, DBG_WARNING, DBG_INFO, DBG_DEBUG, DBG_VERBOSE
+
 // datasheets
 //MCP45HV31 https://eu.mouser.com/datasheet/2/268/20005304A-347268.pdf
 
@@ -90,6 +93,6 @@
 #define VCC_VOLTAGE_MULTIPLIER 4.561 // 1.25*(1+100k/4k7)=27.846V; max wiper (100k) = 127 -> 27.846 = 127, 0.219 = 1
 #define VDC_VOLTAGE_MULTIPLIER 4.561
 
-#define MENU_SERIAL Serial
+#define MENU_SERIAL Serial1
 
 #endif // HARDWARE_H

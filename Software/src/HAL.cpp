@@ -8,10 +8,6 @@
 #include "hardware.h"
 #include "MultiMap.h"
 
-#define DEBUG_SERIAL    Serial1
-#define DEBUG_LEVEL     DBG_VERBOSE	// DBG_NONE, DBG_ERROR, DBG_WARNING, DBG_INFO, DBG_DEBUG, DBG_VERBOSE
-
-
 HAL* HAL::halInstance_= nullptr;
 
 const MD_AD9833::mode_t HAL::FreqOutModes[] = {
@@ -212,7 +208,7 @@ void HAL::configurePowerSupply(enum PsuType psuType, float_t voltage)
 
 		case PsuType::VDC_RAIL:
 		{
-			DEBUG_SERIAL.print("Not assembled yet");
+			Debug.print(DBG_INFO, "Not assembled yet\n");
 			// uint8_t wiper = static_cast<uint8_t>(voltage * VDC_VOLTAGE_MULTIPLIER);
 			// wiper = min(wiper, 127);
 			// mcp_vdc.writeWiper(wiper);

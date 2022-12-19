@@ -1,10 +1,12 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+// third party libraries
 #include <Arduino.h>
+#include <Arduino_DebugUtils.h>
 
 #define DEBUG_SERIAL Serial1
-#define DEBUG_LEVEL DBG_VERBOSE	// DBG_NONE, DBG_ERROR, DBG_WARNING, DBG_INFO, DBG_DEBUG, DBG_VERBOSE
+#define DEBUG_LEVEL DBG_WARNING	// DBG_NONE, DBG_ERROR, DBG_WARNING, DBG_INFO, DBG_DEBUG, DBG_VERBOSE
 
 // datasheets
 //MCP45HV31 https://eu.mouser.com/datasheet/2/268/20005304A-347268.pdf

@@ -1,8 +1,5 @@
 #include <Arduino.h>
 
-// third party libraries
-#include <Arduino_DebugUtils.h>
-
 // custom libraries
 #include "hardware.h"
 #include "HAL.h"
@@ -18,6 +15,9 @@ CommandHandler* commandHandler = nullptr;
 DataHandler* dataHandler = nullptr;
 
  void setup() {
+	Debug.setDebugLevel(DEBUG_LEVEL);
+	Debug.setDebugOutputStream(&DEBUG_SERIAL);
+
 	HAL::getInstance()->initialize();
 
 	commandHandler = new ScpiCommandHandler();

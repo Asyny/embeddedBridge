@@ -1,6 +1,11 @@
+#include <Arduino_DebugUtils.h>
+
 #include "CommandHandling/ScpiCommandHandler.h"
 
-ScpiCommandHandler::ScpiCommandHandler(void) {
+#include "hardware.h"
+
+
+ScpiCommandHandler::ScpiCommandHandler(void) : CommandHandler() {
 
 }
 
@@ -10,11 +15,15 @@ ScpiCommandHandler::~ScpiCommandHandler(void) {
 }
 
 
-void ScpiCommandHandler::setup(void) {
-    
+void ScpiCommandHandler::doSetup(void) {
+    Debug.print(DBG_INFO, "\n>>> ScpiCommandHandler::setup");
 }
 
 
-void ScpiCommandHandler::process(void) {
-    
+void ScpiCommandHandler::doProcess(void) {
+    String input = MENU_SERIAL.readString();
+    input.replace("\r\n", "");
+    if (input.equals("SYStem:COMmand:INput MENU")) {
+        DataModel::newMode = DataModel::CommandHandlerInputMode::INTERACTIVE;
+    }
 }

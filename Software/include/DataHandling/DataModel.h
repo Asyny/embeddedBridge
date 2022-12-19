@@ -2,7 +2,7 @@
 #define DATA_MODEL_H
 
 #include <Arduino.h>
-
+#include "CommandHandling/CommandHandler.h"
 namespace DataModel
 {
     // ############# AIN #################
@@ -85,6 +85,14 @@ namespace DataModel
     };
 
     extern struct lshiftSettings lshift;
+
+    enum CommandHandlerInputMode {
+        SCPI = 0,
+        INTERACTIVE = 1,
+        IDLE = 2
+    };
+
+    extern CommandHandlerInputMode newMode;
     
 };
 

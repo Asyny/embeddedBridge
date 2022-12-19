@@ -20,8 +20,8 @@ namespace SerialMenu {
         InteractiveCommandHandler(void); 
         virtual ~InteractiveCommandHandler(void);
 
-        virtual void setup(void) override;
-        virtual void process(void) override;
+        virtual void doSetup(void) override;
+        virtual void doProcess(void) override;
     };
 }
 

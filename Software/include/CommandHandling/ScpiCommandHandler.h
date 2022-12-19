@@ -3,6 +3,7 @@
 
 
 #include "CommandHandler.h"
+#include "DataHandling/DataModel.h"
 
 class ScpiCommandHandler : public CommandHandler {
 
@@ -10,8 +11,12 @@ public:
     ScpiCommandHandler(void); 
     virtual ~ScpiCommandHandler(void);
 
-    virtual void setup(void) override;
-    virtual void process(void) override;
+    virtual void doSetup(void) override;
+    virtual void doProcess(void) override;
+
+private:
+
+
 };
 
 #endif // SCPI_COMMAND_HANDLER_H

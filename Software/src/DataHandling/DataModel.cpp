@@ -13,4 +13,6 @@ namespace DataModel
     struct foutSettings fout;
     struct batSettings bat;
     struct lshiftSettings lshift;
+    
+    CommandHandlerInputMode newMode = CommandHandlerInputMode::SCPI;
 };

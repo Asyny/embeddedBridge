@@ -242,6 +242,12 @@ namespace SerialMenu {
         ,EXIT("Back")
     );
 
+    SELECT(DataModel::newMode, commandInputModeMenu, "SCPI Mode", doNothing, exitEvent, noStyle
+        ,VALUE("Yes",  DataModel::CommandHandlerInputMode::SCPI, doNothing, noEvent)
+        ,VALUE("Idle", DataModel::CommandHandlerInputMode::IDLE, doNothing, noEvent)
+        ,VALUE("No", DataModel::CommandHandlerInputMode::INTERACTIVE, doNothing, noEvent)
+    );
+
     MENU(mainMenu, "Main menu", doNothing, noEvent, wrapStyle
         ,SUBMENU(doutMenu)
         ,SUBMENU(lshiftMenu)
@@ -249,6 +255,7 @@ namespace SerialMenu {
         ,SUBMENU(foutMenu)
         ,SUBMENU(batMenu)
         ,SUBMENU(relaisMenu) 
+        ,SUBMENU(commandInputModeMenu)
         // ToDo: calibration for AIN
         ,EXIT("EXIT")
     );
@@ -270,7 +277,7 @@ SerialMenu::InteractiveCommandHandler::~InteractiveCommandHandler(void) {
 }
 
 
-void SerialMenu::InteractiveCommandHandler::setup(void) {
+void SerialMenu::InteractiveCommandHandler::doSetup(void) {
     options = &myOptions;
 
     ainMenu[1].disable();
@@ -291,6 +298,6 @@ void SerialMenu::InteractiveCommandHandler::setup(void) {
 }
 
 
-void SerialMenu::InteractiveCommandHandler::process(void) {
+void SerialMenu::InteractiveCommandHandler::doProcess(void) {
     nav.poll();
 }

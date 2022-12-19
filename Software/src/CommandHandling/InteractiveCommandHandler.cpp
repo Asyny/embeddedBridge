@@ -34,13 +34,13 @@ namespace SerialMenu {
         ,VALUE("off", LOW, doNothing, noEvent)
     );
 
-    char* const allowedDigits PROGMEM="0123456789";
-    char* const voltageValidator[] PROGMEM = { allowedDigits, allowedDigits, allowedDigits, ".",
-                                               allowedDigits, allowedDigits, allowedDigits, "V"};
-    char* const currentValidator[] PROGMEM = { allowedDigits, allowedDigits, allowedDigits, ".",
-                                               allowedDigits, allowedDigits, allowedDigits, "m", "A"};
-    char* const powerValidator[] PROGMEM =   { allowedDigits, allowedDigits, allowedDigits, ".",
-                                               allowedDigits, allowedDigits, allowedDigits, "m", "W"};
+    char* const allowedDigits PROGMEM = strdup("0123456789");
+    char* const voltageValidator[] PROGMEM = { allowedDigits, allowedDigits, allowedDigits, strdup("."),
+                                               allowedDigits, allowedDigits, allowedDigits, strdup("V")};
+    char* const currentValidator[] PROGMEM = { allowedDigits, allowedDigits, allowedDigits, strdup("."),
+                                               allowedDigits, allowedDigits, allowedDigits, strdup("m"), strdup("A")};
+    char* const powerValidator[] PROGMEM =   { allowedDigits, allowedDigits, allowedDigits, strdup("."),
+                                               allowedDigits, allowedDigits, allowedDigits, strdup("m"), strdup("W")};
     MENU(vccMenu, "VCC", doNothing, noEvent, noStyle
         ,SUBMENU(vccEnMenu)
         ,FIELD(DataModel::vcc.value, "set", "V", 0.0, VCC_VDC_MAX_VOLTAGE, 1.0, 0.1, doNothing, exitEvent, noStyle)

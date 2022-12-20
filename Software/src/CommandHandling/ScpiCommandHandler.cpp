@@ -179,12 +179,136 @@ void ScpiCommandHandler::adcCommandProcessing(void) {
 
 
 void ScpiCommandHandler::batSimCommandProcessing(void) {
-
+    if (commandLine.equals("BATterySIMulation:VOLTage?")) {
+        MENU_SERIAL.printf("%f\r\n", DataModel::bat.value);
+    } 
+    if (commandLine.equals("BATterySIMulation:INA:VOLTage?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::bat.ina.voltage);
+    }
+    if (commandLine.equals("BATterySIMulation:INA:CURrent?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::bat.ina.current);
+    }
+    if (commandLine.equals("BATterySIMulation:INA:POWer?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::bat.ina.power);
+    }
+    if (commandLine.startsWith("BATterySIMulation:VOLTage ")) {
+        String parameter = commandLine;
+        parameter.replace("BATterySIMulation:VOLTage ", "");
+        if (parameter.length() != 0) {
+            float_t batteryVoltage = parameter.toFloat();
+            Debug.print(DBG_INFO, "\n>>> Battery nominal voltage received via SCPI interface is: %f", batteryVoltage);
+            DataModel::bat.value = batteryVoltage;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
 }
 
 
 void ScpiCommandHandler::fOutCommandProcessing(void) {
+    if (commandLine.equals("FREQuencyOUTput:FREQuency?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::fout.frequency);
+    } 
+    if (commandLine.equals("FREQuencyOUTput:MODE?")) {
+        switch (DataModel::fout.mode) {
+            case 0:
+                MENU_SERIAL.print("off\r\n");
+                break;
+            
+            case 1:
+                MENU_SERIAL.print("sine\r\n");
+                break;
 
+            case 2:
+                MENU_SERIAL.print("square1\r\n");
+                break;
+
+            case 3:
+                MENU_SERIAL.print("square2\r\n");
+                break;
+
+            case 4:
+                MENU_SERIAL.print("Triangle\r\n");
+                break;
+            
+            default:
+                MENU_SERIAL.print("error\r\n");
+                break;
+        }
+    } 
+    if (commandLine.equals("FREQuencyOUTput:MUTLiplier?")) {
+        switch (DataModel::fout.multiplier) {
+            case 0:
+                MENU_SERIAL.print("Hz\r\n");
+                break;
+            
+            case 1:
+                MENU_SERIAL.print("kHz\r\n");
+                break;
+
+            case 2:
+                MENU_SERIAL.print("MHz\r\n");
+                break;
+
+            default:
+                MENU_SERIAL.print("error\r\n");
+                break;
+        }
+        MENU_SERIAL.printf("%s\r\n", DataModel::fout.multiplier);
+    } 
+    if (commandLine.equals("FREQuencyOUTput:OFFSET?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::fout.offset);
+    }
+    if (commandLine.startsWith("FREQuencyOUTput:FREQuency ")) {
+        String parameter = commandLine;
+        parameter.replace("FREQuencyOUTput:FREQuency ", "");
+        if (parameter.length() != 0) {
+            Debug.print(DBG_INFO, "\n>>> Frequency received via SCPI interface is: %s", parameter);
+            strncpy(DataModel::fout.frequency, parameter.c_str(), 
+                parameter.length() < sizeof(DataModel::fout.frequency) ? parameter.length() : 
+                    sizeof(DataModel::fout.frequency));
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("FREQuencyOUTput:MODE ")) {
+        String parameter = commandLine;
+        parameter.replace("FREQuencyOUTput:MODE ", "");
+        if (parameter.length() != 0) {
+            uint8_t mode = parameter.toInt();
+            Debug.print(DBG_INFO, "\n>>> Frequency mode received via SCPI interface is: %d", mode);
+            DataModel::fout.mode = mode;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("FREQuencyOUTput:MUTLiplier ")) {
+        String parameter = commandLine;
+        parameter.replace("FREQuencyOUTput:MUTLiplier ", "");
+        if (parameter.length() != 0) {
+            uint8_t multiplier = parameter.toInt();
+            Debug.print(DBG_INFO, "\n>>> Frequency multiplier received via SCPI interface is: %d", multiplier);
+            DataModel::fout.multiplier = multiplier;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("FREQuencyOUTput:OFFSET ")) {
+        String parameter = commandLine;
+        parameter.replace("FREQuencyOUTput:OFFSET ", "");
+        if (parameter.length() != 0) {
+            float_t offset = parameter.toFloat();
+            Debug.print(DBG_INFO, "\n>>> Frequency offset received via SCPI interface is: %f", offset);
+            DataModel::fout.offset = offset;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
 }
 
 

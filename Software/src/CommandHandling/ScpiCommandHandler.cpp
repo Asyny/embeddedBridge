@@ -313,5 +313,194 @@ void ScpiCommandHandler::fOutCommandProcessing(void) {
 
 
 void ScpiCommandHandler::dOutCommandProcessing(void) {
+    if (commandLine.equals("DIGitalOUTput:VCC?")) {
+        MENU_SERIAL.printf("%d\r\n", DataModel::vcc.enable);
+    }
+    if (commandLine.equals("DIGitalOUTput:VCC:VOLTage?")) {
+        MENU_SERIAL.printf("%f\r\n", DataModel::vcc.value);
+    }
+    if (commandLine.equals("DIGitalOUTput:VCC:INA:VOLTage?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::vcc.ina.voltage);
+    }
+    if (commandLine.equals("DIGitalOUTput:VCC:INA:CURrent?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::vcc.ina.current);
+    }
+    if (commandLine.equals("DIGitalOUTput:VCC:INA:POWer?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::vcc.ina.power);
+    }
+    if (commandLine.equals("DIGitalOUTput:VDC?")) {
+        MENU_SERIAL.printf("%d\r\n", DataModel::vcc.enable);
+    }
+    if (commandLine.equals("DIGitalOUTput:VDC:VOLTage?")) {
+        MENU_SERIAL.printf("%f\r\n", DataModel::vdc.value);
+    }
+    if (commandLine.equals("DIGitalOUTput:VDC:INA:VOLTage?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::vdc.ina.voltage);
+    }
+    if (commandLine.equals("DIGitalOUTput:VDC:INA:CURrent?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::vdc.ina.current);
+    }
+    if (commandLine.equals("DIGitalOUTput:VDC:INA:POWer?")) {
+        MENU_SERIAL.printf("%s\r\n", DataModel::vdc.ina.power);
+    }
+    if (commandLine.equals("DIGitalOUTput:A:Source?")) {
+        switch (DataModel::dout1.value) {
+            case 0:
+                MENU_SERIAL.print("off\r\n");
+                break;
+            
+            case 1:
+                MENU_SERIAL.print("vcc\r\n");
+                break;
 
+            case 2:
+                MENU_SERIAL.print("vdd\r\n");
+                break;
+
+            default:
+                MENU_SERIAL.print("error\r\n");
+                break;
+        }
+    }
+    if (commandLine.equals("DIGitalOUTput:B:Source?")) {
+        switch (DataModel::dout1.value) {
+            case 0:
+                MENU_SERIAL.print("off\r\n");
+                break;
+            
+            case 1:
+                MENU_SERIAL.print("vcc\r\n");
+                break;
+
+            case 2:
+                MENU_SERIAL.print("vdd\r\n");
+                break;
+
+            default:
+                MENU_SERIAL.print("error\r\n");
+                break;
+        }
+    } 
+    if (commandLine.equals("DIGitalOUTput:C:Source?")) {
+        switch (DataModel::dout1.value) {
+            case 0:
+                MENU_SERIAL.print("off\r\n");
+                break;
+            
+            case 1:
+                MENU_SERIAL.print("vcc\r\n");
+                break;
+
+            case 2:
+                MENU_SERIAL.print("vdd\r\n");
+                break;
+
+            default:
+                MENU_SERIAL.print("error\r\n");
+                break;
+        }
+    }
+    if (commandLine.equals("DIGitalOUTput:D:Source?")) {
+        switch (DataModel::dout1.value) {
+            case 0:
+                MENU_SERIAL.print("off\r\n");
+                break;
+            
+            case 1:
+                MENU_SERIAL.print("vcc\r\n");
+                break;
+
+            case 2:
+                MENU_SERIAL.print("vdd\r\n");
+                break;
+
+            default:
+                MENU_SERIAL.print("error\r\n");
+                break;
+        }
+    } 
+    if (commandLine.equals("DIGitalOUTput:VCC:ACTivate")) {
+        DataModel::vcc.enable = true;
+    }
+    if (commandLine.equals("DIGitalOUTput:VCC:DEACTivate")) {
+        DataModel::vcc.enable = false;
+    }
+    if (commandLine.equals("DIGitalOUTput:VDC:ACTivate")) {
+        DataModel::vdc.enable = true;
+    }
+    if (commandLine.equals("DIGitalOUTput:VDC:DEACTivate")) {
+        DataModel::vdc.enable = false;
+    }
+    if (commandLine.startsWith("DIGitalOUTput:A:Source ")) {
+        String parameter = commandLine;
+        parameter.replace("DIGitalOUTput:A:Source ", "");
+        if (parameter.length() != 0) {
+            uint8_t source = parameter.toInt();
+            Debug.print(DBG_INFO, "\n>>> Digital output 1 source received via SCPI interface is: %d", source);
+            DataModel::dout1.value = source;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("DIGitalOUTput:B:Source ")) {
+        String parameter = commandLine;
+        parameter.replace("DIGitalOUTput:B:Source ", "");
+        if (parameter.length() != 0) {
+            uint8_t source = parameter.toInt();
+            Debug.print(DBG_INFO, "\n>>> Digital output 2 source received via SCPI interface is: %d", source);
+            DataModel::dout2.value = source;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("DIGitalOUTput:C:Source ")) {
+        String parameter = commandLine;
+        parameter.replace("DIGitalOUTput:C:Source ", "");
+        if (parameter.length() != 0) {
+            uint8_t source = parameter.toInt();
+            Debug.print(DBG_INFO, "\n>>> Digital output 3 source received via SCPI interface is: %d", source);
+            DataModel::dout3.value = source;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("DIGitalOUTput:D:Source ")) {
+        String parameter = commandLine;
+        parameter.replace("DIGitalOUTput:D:Source ", "");
+        if (parameter.length() != 0) {
+            uint8_t source = parameter.toInt();
+            Debug.print(DBG_INFO, "\n>>> Digital output 4 source received via SCPI interface is: %d", source);
+            DataModel::dout4.value = source;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("DIGitalOUTput:VCC:VOLTage ")) {
+        String parameter = commandLine;
+        parameter.replace("DIGitalOUTput:VCC:VOLTage ", "");
+        if (parameter.length() != 0) {
+            float_t voltage = parameter.toFloat();
+            Debug.print(DBG_INFO, "\n>>> VCC voltage received via SCPI interface is: %f", voltage);
+            DataModel::vcc.value = voltage;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
+    if (commandLine.startsWith("DIGitalOUTput:VDC:VOLTage ")) {
+        String parameter = commandLine;
+        parameter.replace("DIGitalOUTput:VDC:VOLTage ", "");
+        if (parameter.length() != 0) {
+            float_t voltage = parameter.toFloat();
+            Debug.print(DBG_INFO, "\n>>> VDC voltage received via SCPI interface is: %f", voltage);
+            DataModel::vdc.value = voltage;
+        }
+        else {
+            Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+        }
+    }
 }

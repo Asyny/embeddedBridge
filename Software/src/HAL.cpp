@@ -52,6 +52,9 @@ void HAL::initialize(void) {
     initializeSpi();
     initializeI2c();
     initializePsu();
+
+	// set init to 1 instead of auto, because auto is not supported
+	setAinGain(adsGain_t::GAIN_ONE);
 }
 
 

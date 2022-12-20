@@ -7,8 +7,7 @@ namespace DataModel
 {
     // ############# AIN #################
     struct ainSettings {
-        uint8_t gain = 0;
-        uint8_t mode = 0;
+        uint8_t gain = 2;
         char adc1_value[10];
         char adc2_value[10];
         char adc3_value[10];

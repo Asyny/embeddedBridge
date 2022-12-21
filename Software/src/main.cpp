@@ -46,8 +46,6 @@ void selectCommandMenuSource(void) {
 void loop() {
 	selectCommandMenuSource();
 
-	dataHandler->process();
-
 	commandHandler->process();
-	delay(100);
+	dataHandler->process();
 }

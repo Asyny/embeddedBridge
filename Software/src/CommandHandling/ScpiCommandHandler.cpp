@@ -23,15 +23,18 @@ void ScpiCommandHandler::doSetup(void) {
 
 
 void ScpiCommandHandler::doProcess(void) {
-    String input = MENU_SERIAL.readString();
-    if (!input.endsWith("\r\n")) {
-        commandLine += input;
-    }
-    else {
-        commandLine += input;
-        commandLine.replace("\r\n", "");
-        commandProcessing();
-        commandLine = "";
+    if (MENU_SERIAL.available() > 0)
+    {
+        commandLine += char(MENU_SERIAL.read());
+        uint32_t length = commandLine.length();
+
+        if ((commandLine[length - 2] == '\r') &&
+            (commandLine[length - 1] == '\n')) {
+            commandLine[length - 2] = '\0';
+            commandLine[length - 1] = '\0';
+            commandProcessing();
+            commandLine = "";
+        }
     }
 }
 
@@ -42,91 +45,133 @@ void ScpiCommandHandler::commandProcessing(void)
         DataModel::newMode = DataModel::CommandHandlerInputMode::INTERACTIVE;
     }
 
-    relaisCommandProcessing();
-    levelShiftCommandProcessing();
-    adcCommandProcessing();
-    batSimCommandProcessing();
-    fOutCommandProcessing();
-    dOutCommandProcessing();
+    bool done = relaisCommandProcessing();
+    if (!done) {
+        done = levelShiftCommandProcessing();
+    }
+    if (!done) {
+        done = adcCommandProcessing();
+    }
+    if (!done) {
+        done = batSimCommandProcessing();
+    }
+    if (!done) {
+        done = fOutCommandProcessing();
+    }
+    if (!done) {
+        done = dOutCommandProcessing();
+    }
 }
 
 
-void ScpiCommandHandler::relaisCommandProcessing(void) {
+bool ScpiCommandHandler::relaisCommandProcessing(void) {
+    bool done = false;
+
     if (commandLine.equals("RELais:A:ACTivate")) {
         DataModel::relais.enable1 = true;
+        done = true;
     }
-    if (commandLine.equals("RELais:A:DEACTivate")) {
+    else if (commandLine.equals("RELais:A:DEACTivate")) {
         DataModel::relais.enable1 = false;
+        done = true;
     }
-    if (commandLine.equals("RELais:A?")) {
+    else if (commandLine.equals("RELais:A?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::relais.enable1);
+        done = true;
     }
-    if (commandLine.equals("RELais:B:ACTivate")) {
+    else if (commandLine.equals("RELais:B:ACTivate")) {
         DataModel::relais.enable2 = true;
+        done = true;
     }
-    if (commandLine.equals("RELais:B:DEACTivate")) {
+    else if (commandLine.equals("RELais:B:DEACTivate")) {
         DataModel::relais.enable2 = false;
+        done = true;
     }
-    if (commandLine.equals("RELais:B?")) {
+    else if (commandLine.equals("RELais:B?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::relais.enable2);
+        done = true;
     }
+
+    return done;
 }
 
 
-void ScpiCommandHandler::levelShiftCommandProcessing(void) {
+bool ScpiCommandHandler::levelShiftCommandProcessing(void) {
+    bool done = false;
+    
     if (commandLine.equals("LEVelSHift:A:ACTivate")) {
         DataModel::lshift.enable1 = true;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:A:DEACTivate")) {
+    else if (commandLine.equals("LEVelSHift:A:DEACTivate")) {
         DataModel::lshift.enable1 = false;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:A?")) {
+    else if (commandLine.equals("LEVelSHift:A?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::lshift.enable1);
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:B:ACTivate")) {
+    else if (commandLine.equals("LEVelSHift:B:ACTivate")) {
         DataModel::lshift.enable2 = true;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:B:DEACTivate")) {
+    else if (commandLine.equals("LEVelSHift:B:DEACTivate")) {
         DataModel::lshift.enable2 = false;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:B?")) {
+    else if (commandLine.equals("LEVelSHift:B?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::lshift.enable2);
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:C:ACTivate")) {
+    else if (commandLine.equals("LEVelSHift:C:ACTivate")) {
         DataModel::lshift.enable3 = true;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:C:DEACTivate")) {
+    else if (commandLine.equals("LEVelSHift:C:DEACTivate")) {
         DataModel::lshift.enable3 = false;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:C?")) {
+    else if (commandLine.equals("LEVelSHift:C?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::lshift.enable3);
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:D:ACTivate")) {
+    else if (commandLine.equals("LEVelSHift:D:ACTivate")) {
         DataModel::lshift.enable4 = true;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:D:DEACTivate")) {
+    else if (commandLine.equals("LEVelSHift:D:DEACTivate")) {
         DataModel::lshift.enable4 = false;
+        done = true;
     }
-    if (commandLine.equals("LEVelSHift:D?")) {
+    else if (commandLine.equals("LEVelSHift:D?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::lshift.enable4);
+        done = true;
     }
+
+    return done;
 }
 
 
-void ScpiCommandHandler::adcCommandProcessing(void) {
+bool ScpiCommandHandler::adcCommandProcessing(void) {
+    bool done = false;
+    
     if (commandLine.equals("AnalogIN:A?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::ain.adc1_value);
+        done = true;
     }
-    if (commandLine.equals("AnalogIN:B?")) {
+    else if (commandLine.equals("AnalogIN:B?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::ain.adc2_value);
+        done = true;
     }
-    if (commandLine.equals("AnalogIN:C?")) {
+    else if (commandLine.equals("AnalogIN:C?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::ain.adc3_value);
+        done = true;
     }
-    if (commandLine.equals("AnalogIN:D?")) {
+    else if (commandLine.equals("AnalogIN:D?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::ain.adc4_value);
+        done = true;
     }
-    if (commandLine.equals("AnalogIN:GAIN?")) {
+    else if (commandLine.equals("AnalogIN:GAIN?")) {
         switch (DataModel::ain.gain) {
             case 0:
                 MENU_SERIAL.print("auto\r\n");
@@ -160,10 +205,11 @@ void ScpiCommandHandler::adcCommandProcessing(void) {
                 MENU_SERIAL.print("error\r\n");
                 break;
         }
+        done = true;
     } 
     // TODO: Check better parameter format. Using string representing numbers an integers itself
     // may confuse the user! 
-    if (commandLine.startsWith("AnalogIN:GAIN ")) {
+    else if (commandLine.startsWith("AnalogIN:GAIN ")) {
         String parameter = commandLine;
         parameter.replace("AnalogIN:GAIN ", "");
         if (parameter.length() != 0) {
@@ -174,24 +220,33 @@ void ScpiCommandHandler::adcCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
+
+    return done;
 }
 
 
-void ScpiCommandHandler::batSimCommandProcessing(void) {
+bool ScpiCommandHandler::batSimCommandProcessing(void) {
+    bool done = false;
+    
     if (commandLine.equals("BATterySIMulation:VOLTage?")) {
         MENU_SERIAL.printf("%f\r\n", DataModel::bat.value);
+        done = true;
     } 
-    if (commandLine.equals("BATterySIMulation:INA:VOLTage?")) {
+    else if (commandLine.equals("BATterySIMulation:INA:VOLTage?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::bat.ina.voltage);
+        done = true;
     }
-    if (commandLine.equals("BATterySIMulation:INA:CURrent?")) {
+    else if (commandLine.equals("BATterySIMulation:INA:CURrent?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::bat.ina.current);
+        done = true;
     }
-    if (commandLine.equals("BATterySIMulation:INA:POWer?")) {
+    else if (commandLine.equals("BATterySIMulation:INA:POWer?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::bat.ina.power);
+        done = true;
     }
-    if (commandLine.startsWith("BATterySIMulation:VOLTage ")) {
+    else if (commandLine.startsWith("BATterySIMulation:VOLTage ")) {
         String parameter = commandLine;
         parameter.replace("BATterySIMulation:VOLTage ", "");
         if (parameter.length() != 0) {
@@ -202,15 +257,21 @@ void ScpiCommandHandler::batSimCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
+
+    return done;
 }
 
 
-void ScpiCommandHandler::fOutCommandProcessing(void) {
+bool ScpiCommandHandler::fOutCommandProcessing(void) {
+    bool done = false;
+    
     if (commandLine.equals("FREQuencyOUTput:FREQuency?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::fout.frequency);
+        done = true;
     } 
-    if (commandLine.equals("FREQuencyOUTput:MODE?")) {
+    else if (commandLine.equals("FREQuencyOUTput:MODE?")) {
         switch (DataModel::fout.mode) {
             case 0:
                 MENU_SERIAL.print("off\r\n");
@@ -236,8 +297,9 @@ void ScpiCommandHandler::fOutCommandProcessing(void) {
                 MENU_SERIAL.print("error\r\n");
                 break;
         }
+        done = true;
     } 
-    if (commandLine.equals("FREQuencyOUTput:MUTLiplier?")) {
+    else if (commandLine.equals("FREQuencyOUTput:MUTLiplier?")) {
         switch (DataModel::fout.multiplier) {
             case 0:
                 MENU_SERIAL.print("Hz\r\n");
@@ -256,11 +318,13 @@ void ScpiCommandHandler::fOutCommandProcessing(void) {
                 break;
         }
         MENU_SERIAL.printf("%s\r\n", DataModel::fout.multiplier);
+        done = true;
     } 
-    if (commandLine.equals("FREQuencyOUTput:OFFSET?")) {
+    else if (commandLine.equals("FREQuencyOUTput:OFFSET?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::fout.offset);
+        done = true;
     }
-    if (commandLine.startsWith("FREQuencyOUTput:FREQuency ")) {
+    else if (commandLine.startsWith("FREQuencyOUTput:FREQuency ")) {
         String parameter = commandLine;
         parameter.replace("FREQuencyOUTput:FREQuency ", "");
         if (parameter.length() != 0) {
@@ -272,8 +336,9 @@ void ScpiCommandHandler::fOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("FREQuencyOUTput:MODE ")) {
+    else if (commandLine.startsWith("FREQuencyOUTput:MODE ")) {
         String parameter = commandLine;
         parameter.replace("FREQuencyOUTput:MODE ", "");
         if (parameter.length() != 0) {
@@ -284,8 +349,9 @@ void ScpiCommandHandler::fOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("FREQuencyOUTput:MUTLiplier ")) {
+    else if (commandLine.startsWith("FREQuencyOUTput:MUTLiplier ")) {
         String parameter = commandLine;
         parameter.replace("FREQuencyOUTput:MUTLiplier ", "");
         if (parameter.length() != 0) {
@@ -296,8 +362,9 @@ void ScpiCommandHandler::fOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("FREQuencyOUTput:OFFSET ")) {
+    else if (commandLine.startsWith("FREQuencyOUTput:OFFSET ")) {
         String parameter = commandLine;
         parameter.replace("FREQuencyOUTput:OFFSET ", "");
         if (parameter.length() != 0) {
@@ -308,42 +375,57 @@ void ScpiCommandHandler::fOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
+
+    return done;
 }
 
 
-void ScpiCommandHandler::dOutCommandProcessing(void) {
+bool ScpiCommandHandler::dOutCommandProcessing(void) {
+    bool done = false;
+
     if (commandLine.equals("DIGitalOUTput:VCC?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::vcc.enable);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VCC:VOLTage?")) {
+    else if (commandLine.equals("DIGitalOUTput:VCC:VOLTage?")) {
         MENU_SERIAL.printf("%f\r\n", DataModel::vcc.value);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VCC:INA:VOLTage?")) {
+    else if (commandLine.equals("DIGitalOUTput:VCC:INA:VOLTage?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::vcc.ina.voltage);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VCC:INA:CURrent?")) {
+    else if (commandLine.equals("DIGitalOUTput:VCC:INA:CURrent?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::vcc.ina.current);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VCC:INA:POWer?")) {
+    else if (commandLine.equals("DIGitalOUTput:VCC:INA:POWer?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::vcc.ina.power);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VDC?")) {
+    else if (commandLine.equals("DIGitalOUTput:VDC?")) {
         MENU_SERIAL.printf("%d\r\n", DataModel::vcc.enable);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VDC:VOLTage?")) {
+    else if (commandLine.equals("DIGitalOUTput:VDC:VOLTage?")) {
         MENU_SERIAL.printf("%f\r\n", DataModel::vdc.value);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VDC:INA:VOLTage?")) {
+    else if (commandLine.equals("DIGitalOUTput:VDC:INA:VOLTage?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::vdc.ina.voltage);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VDC:INA:CURrent?")) {
+    else if (commandLine.equals("DIGitalOUTput:VDC:INA:CURrent?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::vdc.ina.current);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VDC:INA:POWer?")) {
+    else if (commandLine.equals("DIGitalOUTput:VDC:INA:POWer?")) {
         MENU_SERIAL.printf("%s\r\n", DataModel::vdc.ina.power);
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:A:Source?")) {
+    else if (commandLine.equals("DIGitalOUTput:A:Source?")) {
         switch (DataModel::dout1.value) {
             case 0:
                 MENU_SERIAL.print("off\r\n");
@@ -361,8 +443,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
                 MENU_SERIAL.print("error\r\n");
                 break;
         }
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:B:Source?")) {
+    else if (commandLine.equals("DIGitalOUTput:B:Source?")) {
         switch (DataModel::dout1.value) {
             case 0:
                 MENU_SERIAL.print("off\r\n");
@@ -380,8 +463,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
                 MENU_SERIAL.print("error\r\n");
                 break;
         }
+        done = true;
     } 
-    if (commandLine.equals("DIGitalOUTput:C:Source?")) {
+    else if (commandLine.equals("DIGitalOUTput:C:Source?")) {
         switch (DataModel::dout1.value) {
             case 0:
                 MENU_SERIAL.print("off\r\n");
@@ -399,8 +483,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
                 MENU_SERIAL.print("error\r\n");
                 break;
         }
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:D:Source?")) {
+    else if (commandLine.equals("DIGitalOUTput:D:Source?")) {
         switch (DataModel::dout1.value) {
             case 0:
                 MENU_SERIAL.print("off\r\n");
@@ -418,20 +503,25 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
                 MENU_SERIAL.print("error\r\n");
                 break;
         }
+        done = true;
     } 
-    if (commandLine.equals("DIGitalOUTput:VCC:ACTivate")) {
+    else if (commandLine.equals("DIGitalOUTput:VCC:ACTivate")) {
         DataModel::vcc.enable = true;
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VCC:DEACTivate")) {
+    else if (commandLine.equals("DIGitalOUTput:VCC:DEACTivate")) {
         DataModel::vcc.enable = false;
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VDC:ACTivate")) {
+    else if (commandLine.equals("DIGitalOUTput:VDC:ACTivate")) {
         DataModel::vdc.enable = true;
+        done = true;
     }
-    if (commandLine.equals("DIGitalOUTput:VDC:DEACTivate")) {
+    else if (commandLine.equals("DIGitalOUTput:VDC:DEACTivate")) {
         DataModel::vdc.enable = false;
+        done = true;
     }
-    if (commandLine.startsWith("DIGitalOUTput:A:Source ")) {
+    else if (commandLine.startsWith("DIGitalOUTput:A:Source ")) {
         String parameter = commandLine;
         parameter.replace("DIGitalOUTput:A:Source ", "");
         if (parameter.length() != 0) {
@@ -442,8 +532,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("DIGitalOUTput:B:Source ")) {
+    else if (commandLine.startsWith("DIGitalOUTput:B:Source ")) {
         String parameter = commandLine;
         parameter.replace("DIGitalOUTput:B:Source ", "");
         if (parameter.length() != 0) {
@@ -454,8 +545,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("DIGitalOUTput:C:Source ")) {
+    else if (commandLine.startsWith("DIGitalOUTput:C:Source ")) {
         String parameter = commandLine;
         parameter.replace("DIGitalOUTput:C:Source ", "");
         if (parameter.length() != 0) {
@@ -466,8 +558,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("DIGitalOUTput:D:Source ")) {
+    else if (commandLine.startsWith("DIGitalOUTput:D:Source ")) {
         String parameter = commandLine;
         parameter.replace("DIGitalOUTput:D:Source ", "");
         if (parameter.length() != 0) {
@@ -478,8 +571,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("DIGitalOUTput:VCC:VOLTage ")) {
+    else if (commandLine.startsWith("DIGitalOUTput:VCC:VOLTage ")) {
         String parameter = commandLine;
         parameter.replace("DIGitalOUTput:VCC:VOLTage ", "");
         if (parameter.length() != 0) {
@@ -490,8 +584,9 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
-    if (commandLine.startsWith("DIGitalOUTput:VDC:VOLTage ")) {
+    else if (commandLine.startsWith("DIGitalOUTput:VDC:VOLTage ")) {
         String parameter = commandLine;
         parameter.replace("DIGitalOUTput:VDC:VOLTage ", "");
         if (parameter.length() != 0) {
@@ -502,5 +597,8 @@ void ScpiCommandHandler::dOutCommandProcessing(void) {
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
         }
+        done = true;
     }
+
+    return done;
 }

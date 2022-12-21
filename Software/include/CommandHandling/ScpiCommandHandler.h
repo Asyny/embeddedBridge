@@ -18,12 +18,12 @@ private:
     String commandLine = "";
 
     void commandProcessing(void);
-    void relaisCommandProcessing(void);
-    void levelShiftCommandProcessing(void);
-    void adcCommandProcessing(void);
-    void batSimCommandProcessing(void);
-    void fOutCommandProcessing(void);
-    void dOutCommandProcessing(void);
+    bool relaisCommandProcessing(void);
+    bool levelShiftCommandProcessing(void);
+    bool adcCommandProcessing(void);
+    bool batSimCommandProcessing(void);
+    bool fOutCommandProcessing(void);
+    bool dOutCommandProcessing(void);
 };
 
 #endif // SCPI_COMMAND_HANDLER_H

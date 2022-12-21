@@ -95,6 +95,6 @@
 #define VCC_VOLTAGE_MULTIPLIER 4.561 // 1.25*(1+100k/4k7)=27.846V; max wiper (100k) = 127 -> 27.846 = 127, 0.219 = 1
 #define VDC_VOLTAGE_MULTIPLIER 4.561
 
-#define MENU_SERIAL Serial1
+#define MENU_SERIAL Serial
 
 #endif // HARDWARE_H

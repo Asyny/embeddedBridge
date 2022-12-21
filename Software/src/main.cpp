@@ -14,7 +14,7 @@
 CommandHandler* commandHandler = nullptr;
 DataHandler* dataHandler = nullptr;
 
- void setup() {
+void setup() {
 	Debug.setDebugLevel(DEBUG_LEVEL);
 	Debug.setDebugOutputStream(&DEBUG_SERIAL);
 

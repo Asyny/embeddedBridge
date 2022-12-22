@@ -16,6 +16,7 @@ ScpiCommandHandler::~ScpiCommandHandler(void) {
 
 void ScpiCommandHandler::doSetup(void) {
     Debug.print(DBG_INFO, "\n>>> ScpiCommandHandler::setup");
+    MENU_SERIAL.setTimeout(0);
     // first read from serial interface always contains "\374" at the beginning
     // clearing this content by reading serial interface
     String input = MENU_SERIAL.readString();
@@ -30,7 +31,7 @@ void ScpiCommandHandler::doProcess(void) {
 
         if ((commandLine[length - 1] == '\r') ||
             (commandLine[length - 1] == '\n')) {
-            commandLine[length - 1] = '\0';
+            commandLine.remove(length - 1);
             commandProcessing();
             commandLine = "";
         }
@@ -44,26 +45,34 @@ void ScpiCommandHandler::commandProcessing(void)
         DataModel::newMode = DataModel::CommandHandlerInputMode::INTERACTIVE;
     }
 
-    bool done = relaisCommandProcessing();
+    bool hasError = false;
+    bool done = relaisCommandProcessing(hasError);
     if (!done) {
-        done = levelShiftCommandProcessing();
+        done = levelShiftCommandProcessing(hasError);
     }
     if (!done) {
-        done = adcCommandProcessing();
+        done = adcCommandProcessing(hasError);
     }
     if (!done) {
-        done = batSimCommandProcessing();
+        done = batSimCommandProcessing(hasError);
     }
     if (!done) {
-        done = fOutCommandProcessing();
+        done = fOutCommandProcessing(hasError);
     }
     if (!done) {
-        done = dOutCommandProcessing();
+        done = dOutCommandProcessing(hasError);
+    }
+
+    if (hasError || !done) {
+        MENU_SERIAL.println("NOK");
+    }
+    else {
+        MENU_SERIAL.println("OK");
     }
 }
 
 
-bool ScpiCommandHandler::relaisCommandProcessing(void) {
+bool ScpiCommandHandler::relaisCommandProcessing(bool& hasError) {
     bool done = false;
 
     if (commandLine.equals("RELais:A:ACTivate")) {
@@ -95,7 +104,7 @@ bool ScpiCommandHandler::relaisCommandProcessing(void) {
 }
 
 
-bool ScpiCommandHandler::levelShiftCommandProcessing(void) {
+bool ScpiCommandHandler::levelShiftCommandProcessing(bool& hasError) {
     bool done = false;
     
     if (commandLine.equals("LEVelSHift:A:ACTivate")) {
@@ -151,7 +160,7 @@ bool ScpiCommandHandler::levelShiftCommandProcessing(void) {
 }
 
 
-bool ScpiCommandHandler::adcCommandProcessing(void) {
+bool ScpiCommandHandler::adcCommandProcessing(bool& hasError) {
     bool done = false;
     
     if (commandLine.equals("AnalogIN:A?")) {
@@ -202,6 +211,7 @@ bool ScpiCommandHandler::adcCommandProcessing(void) {
             
             default:
                 MENU_SERIAL.println("error");
+                hasError = true;
                 break;
         }
         done = true;
@@ -218,6 +228,7 @@ bool ScpiCommandHandler::adcCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -226,7 +237,7 @@ bool ScpiCommandHandler::adcCommandProcessing(void) {
 }
 
 
-bool ScpiCommandHandler::batSimCommandProcessing(void) {
+bool ScpiCommandHandler::batSimCommandProcessing(bool& hasError) {
     bool done = false;
     
     if (commandLine.equals("BATterySIMulation:VOLTage?")) {
@@ -255,6 +266,7 @@ bool ScpiCommandHandler::batSimCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -263,7 +275,7 @@ bool ScpiCommandHandler::batSimCommandProcessing(void) {
 }
 
 
-bool ScpiCommandHandler::fOutCommandProcessing(void) {
+bool ScpiCommandHandler::fOutCommandProcessing(bool& hasError) {
     bool done = false;
     
     if (commandLine.equals("FREQuencyOUTput:FREQuency?")) {
@@ -294,6 +306,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(void) {
             
             default:
                 MENU_SERIAL.println("error");
+                hasError = true;
                 break;
         }
         done = true;
@@ -314,6 +327,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(void) {
 
             default:
                 MENU_SERIAL.println("error");
+                hasError = true;
                 break;
         }
         MENU_SERIAL.println(DataModel::fout.multiplier);
@@ -334,6 +348,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -347,6 +362,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -360,6 +376,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -373,6 +390,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -381,7 +399,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(void) {
 }
 
 
-bool ScpiCommandHandler::dOutCommandProcessing(void) {
+bool ScpiCommandHandler::dOutCommandProcessing(bool& hasError) {
     bool done = false;
 
     if (commandLine.equals("DIGitalOUTput:VCC?")) {
@@ -440,6 +458,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
 
             default:
                 MENU_SERIAL.println("error");
+                hasError = true;
                 break;
         }
         done = true;
@@ -460,6 +479,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
 
             default:
                 MENU_SERIAL.println("error");
+                hasError = true;
                 break;
         }
         done = true;
@@ -480,6 +500,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
 
             default:
                 MENU_SERIAL.println("error");
+                hasError = true;
                 break;
         }
         done = true;
@@ -500,6 +521,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
 
             default:
                 MENU_SERIAL.println("error");
+                hasError = true;
                 break;
         }
         done = true;
@@ -530,6 +552,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -543,6 +566,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -556,6 +580,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -569,6 +594,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -582,6 +608,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }
@@ -595,6 +622,7 @@ bool ScpiCommandHandler::dOutCommandProcessing(void) {
         }
         else {
             Debug.print(DBG_ERROR, "\n>>> Empty SCPI parameter");
+            hasError = true;
         }
         done = true;
     }

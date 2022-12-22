@@ -301,7 +301,7 @@ bool ScpiCommandHandler::fOutCommandProcessing(bool& hasError) {
                 break;
 
             case 4:
-                MENU_SERIAL.println("Triangle");
+                MENU_SERIAL.println("triangle");
                 break;
             
             default:

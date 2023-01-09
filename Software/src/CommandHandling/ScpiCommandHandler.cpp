@@ -32,6 +32,9 @@ void ScpiCommandHandler::doProcess(void) {
         if ((commandLine[length - 1] == '\r') ||
             (commandLine[length - 1] == '\n')) {
             commandLine.remove(length - 1);
+            if (MENU_SERIAL.peek() == (int)'\n' || MENU_SERIAL.peek() == (int)'\r') {
+                MENU_SERIAL.read();
+            }
             commandProcessing();
             commandLine = "";
         }

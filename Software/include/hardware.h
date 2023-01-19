@@ -1,4 +1,12 @@
+#ifndef HARDWARE_H
+#define HARDWARE_H
+
+// third party libraries
 #include <Arduino.h>
+#include <Arduino_DebugUtils.h>
+
+#define DEBUG_SERIAL Serial1
+#define DEBUG_LEVEL DBG_WARNING	// DBG_NONE, DBG_ERROR, DBG_WARNING, DBG_INFO, DBG_DEBUG, DBG_VERBOSE
 
 // datasheets
 //MCP45HV31 https://eu.mouser.com/datasheet/2/268/20005304A-347268.pdf
@@ -78,13 +86,15 @@
 #define MCP23017_MAX_PIN 15
 
 #define AIN1_VOLTAGE_DEVIDER 9.1266
-#define AIN2_VOLTAGE_DEVIDER 8
-#define AIN3_VOLTAGE_DEVIDER 8
-#define AIN4_VOLTAGE_DEVIDER 8
+#define AIN2_VOLTAGE_DEVIDER 9.1266
+#define AIN3_VOLTAGE_DEVIDER 9.1266
+#define AIN4_VOLTAGE_DEVIDER 9.1266
 
 #define FOUT_OFFSET_MULTIPLIER 160
 #define BAT_MULTIPLIER 790
 #define VCC_VOLTAGE_MULTIPLIER 4.561 // 1.25*(1+100k/4k7)=27.846V; max wiper (100k) = 127 -> 27.846 = 127, 0.219 = 1
 #define VDC_VOLTAGE_MULTIPLIER 4.561
 
-#define MENU_SERIAL Serial1
+#define MENU_SERIAL Serial
+
+#endif // HARDWARE_H

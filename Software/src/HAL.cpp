@@ -3,10 +3,10 @@
 #include <Arduino_DebugUtils.h>
 #include <SPI.h>
 #include <Wire.h>
+#include <MultiMap.h>
 
 // custom libraries
 #include "hardware.h"
-#include "MultiMap.h"
 
 HAL* HAL::halInstance_= nullptr;
 

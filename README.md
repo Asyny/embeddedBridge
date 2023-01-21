@@ -7,6 +7,8 @@ Develop and test your own embedded system without the need to build a dedicated 
 
 ## Features <a name="Features"></a>
 
+<img src="Hardware/pictures/embeddedBridge_features.drawio.png"/>
+
 - 4x DOUT (2x 0 - 24 V)
 - 4x AOUT (0 - 24 V)
 - 4x AIN (max. 27 V)
